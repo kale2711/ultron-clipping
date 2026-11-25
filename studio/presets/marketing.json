@@ -1,0 +1,6 @@
+{"_notes": "Hook = the problem or the result in the first line. Problem > product > proof > CTA. Clean grade, captions always on, CTA with offer/link in last 2-3s. Export 9:16 + 4:5 (+16:9 if needed). 20-45s.",
+ "format": "9:16", "reframe": "crop", "grade": "clean",
+ "captions": {"on": true, "style": "bold", "y": 0.70},
+ "music": {"volume": 0.15, "duck": true},
+ "text": [{"text": "HOOK LINE", "start": 0, "end": 2.0},
+          {"text": "Link in bio", "start": -2.5, "end": -0.1, "style": "box", "y": 0.8}]}

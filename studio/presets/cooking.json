@@ -1,0 +1,6 @@
+{"_notes": "Hook = finished dish or sizzle. Speed prep 2-4x muted, real-time for key moments (pour, flip, cut-open). 20-40s.",
+ "format": "9:16", "reframe": "crop", "grade": "warm",
+ "captions": {"on": true, "style": "kitchen", "y": 0.72},
+ "music": {"volume": 0.18, "duck": true},
+ "text": [{"text": "DISH NAME", "start": 0, "end": 2.2},
+          {"text": "Save this recipe", "start": -2.0, "end": -0.1, "style": "box", "y": 0.8}]}

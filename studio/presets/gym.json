@@ -1,0 +1,6 @@
+{"_notes": "Hook = heaviest rep or most intense moment. Cut on the beat, slow-mo the top set, speed rest/warm-up 3-4x muted. Label sets/weights with text cards. 15-30s.",
+ "format": "9:16", "reframe": "crop", "grade": "punchy",
+ "captions": {"on": true, "style": "gym", "y": 0.70},
+ "music": {"volume": 0.35, "duck": true},
+ "text": [{"text": "LEG DAY", "start": 0, "end": 1.8},
+          {"text": "Follow for the program", "start": -2.0, "end": -0.1, "style": "box", "y": 0.8}]}
