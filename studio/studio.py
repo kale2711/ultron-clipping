@@ -7,6 +7,7 @@ Commands
   silences FILE [--db -32 --min 0.45]
                                 suggest keep-segments with dead air removed
   contact FILE [-n 16]          contact sheet JPG of frames, to review footage visually
+  ref FILE...                   break down a reference video (cut pace, hook frames, transcript)
   render PLAN.json              build the final video described by the plan
 
 The plan format is documented in studio/brain/Plan format.md.
@@ -105,6 +106,27 @@ def contact_sheet(path, n=16, out=None):
          f"fps=1/{step:.3f},scale=480:-2,drawtext=text='%{{pts\\:hms}}':x=8:y=8:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.6,tile={cols}x{rows}",
          "-frames:v", "1", out])
     return out
+
+
+def analyze_ref(path, out_dir=None):
+    """Break down a reference video: length, shape, cut pace, frames, transcript."""
+    info = probe(path)
+    out_dir = out_dir or os.path.splitext(path)[0] + "_ref"
+    os.makedirs(out_dir, exist_ok=True)
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", path, "-vf", "select='gt(scene,0.3)',showinfo", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    cuts = [round(float(x), 2) for x in re.findall(r"pts_time:([\d.]+)", r.stderr)]
+    shots = [b - a for a, b in zip([0] + cuts, cuts + [info["duration"]])]
+    sheet = contact_sheet(path, 16, os.path.join(out_dir, "sheet.jpg"))
+    first = os.path.join(out_dir, "first_2s.jpg")  # the hook, 4 frames across the first 2s
+    run(["ffmpeg", "-y", "-t", "2", "-i", path, "-vf", "fps=2,scale=360:-2,tile=4x1", "-frames:v", "1", first])
+    words = transcribe(path) if info["has_audio"] else []
+    rep = dict(info, cuts=len(cuts), avg_shot_s=round(sum(shots) / len(shots), 2), cut_times=cuts,
+               words_per_min=round(len(words) / max(info["duration"], 1) * 60),
+               first_words=" ".join(w["w"] for w in words[:15]), transcript=" ".join(w["w"] for w in words),
+               sheet=sheet, hook_strip=first)
+    json.dump(rep, open(os.path.join(out_dir, "report.json"), "w"), indent=1)
+    return rep
 
 
 # ---------------------------------------------------------------- video building blocks
@@ -309,6 +331,7 @@ def main():
     p = sub.add_parser("silences"); p.add_argument("file"); p.add_argument("--db", type=float, default=-32); p.add_argument("--min", type=float, default=0.45)
     p = sub.add_parser("contact"); p.add_argument("file"); p.add_argument("-n", type=int, default=16); p.add_argument("-o")
     p = sub.add_parser("render"); p.add_argument("plan")
+    p = sub.add_parser("ref"); p.add_argument("files", nargs="+")
     a = ap.parse_args()
     if a.cmd == "probe":
         for f in a.files:
@@ -322,6 +345,10 @@ def main():
         print(json.dumps(silences(a.file, a.db, a.min), indent=1))
     elif a.cmd == "contact":
         print(contact_sheet(a.file, a.n, a.o))
+    elif a.cmd == "ref":
+        for f in a.files:
+            rep = analyze_ref(f)
+            print(json.dumps({k: v for k, v in rep.items() if k != "cut_times"}, indent=1))
     elif a.cmd == "render":
         render(a.plan)
 
