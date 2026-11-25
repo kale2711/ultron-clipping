@@ -3,4 +3,4 @@
  "captions": {"on": true, "style": "kitchen", "y": 0.72},
  "music": {"volume": 0.18, "duck": true},
  "text": [{"text": "DISH NAME", "start": 0, "end": 2.2},
-          {"text": "Save this recipe", "start": -2.0, "end": -0.1, "style": "box", "y": 0.8}]}
+          {"text": "Save this recipe", "start": -2.0, "end": -0.1, "style": "box", "y": 0.6}]}

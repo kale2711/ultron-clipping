@@ -3,4 +3,4 @@
  "captions": {"on": true, "style": "bold", "y": 0.70},
  "music": {"volume": 0.15, "duck": true},
  "text": [{"text": "HOOK LINE", "start": 0, "end": 2.0},
-          {"text": "Link in bio", "start": -2.5, "end": -0.1, "style": "box", "y": 0.8}]}
+          {"text": "Link in bio", "start": -2.5, "end": -0.1, "style": "box", "y": 0.6}]}

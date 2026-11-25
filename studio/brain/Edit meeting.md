@@ -12,7 +12,7 @@ so the first cut is close. Look at the footage FIRST (probe + contact sheet + tr
 
 ## 1. The questions (ask in one message, numbered, with my suggested answer for each)
 1. **Type**: cooking / gym / marketing / other? (→ pick the preset in `studio/presets/`)
-2. **Platform + format**: TikTok/Reels/Shorts 9:16 (default), feed 4:5, YouTube 16:9? More than one?
+2. **Platform**: TikTok + Instagram Reels, 9:16 (always). Trending sound to add in-app? (then also export a no-music version)
 3. **Length target**: e.g. 20–35s short, 60s, or long-form.
 4. **The hook**: the moment/line for the first 2 seconds. Propose 2–3 candidates with timestamps.
 5. **Story**: what has to be in it, in order? What must be cut?
@@ -21,7 +21,7 @@ so the first cut is close. Look at the footage FIRST (probe + contact sheet + tr
 8. **Audio**: keep original voice? music (owner supplies track or none; ducked under voice)? trending sound to be added in-app?
 9. **Look**: grade (warm for food, punchy for gym, clean for brand), speed-ups, slow-mo moments.
 10. **Brand**: logo/handle on screen? colors? things to avoid?
-11. **Higgsfield**: any shots worth pulling from their Higgsfield library (B-roll, intro)?
+11. **Higgsfield**: propose AI shots (intro, B-roll, animated still, dub) with model + credit cost; owner generates.
 
 Keep it fast: if the owner says "you choose", use the preset defaults and say what was chosen.
 

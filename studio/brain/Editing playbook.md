@@ -36,6 +36,7 @@ what performs; this file is about *making* the video.
 4. Send to owner; revise; log taste in `Owner taste.md`.
 
 ## Higgsfield
-The Higgsfield connector can **browse existing generations** (`show_generations`), check credits, list models and
-import a Claude Motion MP4. It can NOT generate new media or download arbitrary files from here. So: if the owner wants
-an AI intro/B-roll, they generate it in Higgsfield, and I pull its link from `show_generations` and use it as a segment.
+See `Higgsfield.md` (plan the AI shots, owner generates, I cut them in).
+
+## Platforms
+All videos go to TikTok + Instagram Reels: follow `TikTok and Instagram.md` (safe zones, cover, post copy).

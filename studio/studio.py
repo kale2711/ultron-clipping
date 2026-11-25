@@ -8,6 +8,7 @@ Commands
                                 suggest keep-segments with dead air removed
   contact FILE [-n 16]          contact sheet JPG of frames, to review footage visually
   ref FILE...                   break down a reference video (cut pace, hook frames, transcript)
+  safe FILE [-t 1 5 12]         frames with TikTok/Reels UI zones drawn on (text placement check)
   render PLAN.json              build the final video described by the plan
 
 The plan format is documented in studio/brain/Plan format.md.
@@ -129,6 +130,20 @@ def analyze_ref(path, out_dir=None):
     return rep
 
 
+def safe_check(path, t=1.0, out=None):
+    """Still frame with the TikTok (red) and Instagram Reels (blue) UI zones drawn on, to check text placement."""
+    out = out or os.path.splitext(path)[0] + f"_safe_{t:g}s.jpg"
+    # 1080x1920 zones: TikTok top 130, bottom 420, right 140 | Reels top 220, bottom 380, right 120
+    boxes = ("drawbox=x=0:y=0:w=iw:h=ih*130/1920:color=red@0.35:t=fill,"
+             "drawbox=x=0:y=ih-ih*420/1920:w=iw:h=ih*420/1920:color=red@0.35:t=fill,"
+             "drawbox=x=iw-iw*140/1080:y=0:w=iw*140/1080:h=ih:color=red@0.35:t=fill,"
+             "drawbox=x=0:y=ih*220/1920:w=iw:h=4:color=blue:t=fill,"
+             "drawbox=x=0:y=ih-ih*380/1920:w=iw:h=4:color=blue:t=fill,"
+             "drawbox=x=iw-iw*120/1080:y=0:w=4:h=ih:color=blue:t=fill")
+    run(["ffmpeg", "-y", "-ss", f"{t}", "-i", path, "-frames:v", "1", "-vf", boxes + ",scale=540:-2", out])
+    return out
+
+
 # ---------------------------------------------------------------- video building blocks
 def reframe_filter(fmt, mode, focus_x=0.5):
     W, H = FORMATS[fmt]
@@ -224,7 +239,7 @@ def build_ass(path, fmt, words, cap, cards):
         "[Script Info]", "ScriptType: v4.00+", f"PlayResX: {W}", f"PlayResY: {H}", "WrapStyle: 0", "",
         "[V4+ Styles]",
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
-        f"Style: Cap,{st['font']},{st['size']},{ass_color(st['color'])},&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,{st['outline']},2,5,60,60,0,1",
+        f"Style: Cap,{st['font']},{st['size']},{ass_color(st['color'])},&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,{st['outline']},2,5,90,170,0,1",
         f"Style: Card,Inter Display Black,{int(W*0.085)},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,7,3,5,70,70,0,1",
         f"Style: Box,Inter Display ExtraBold,{int(W*0.055)},&H00111111,&H000000FF,&H00FFFFFF,&H00FFFFFF,0,0,0,0,100,100,0,0,3,18,0,5,70,70,0,1",
         "", "[Events]", "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
@@ -317,7 +332,9 @@ def render(plan_path):
         run(["ffmpeg", "-y", *inputs, "-filter_complex", ";".join(fc), "-map", "[v]", "-map", "[a]",
              "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-profile:v", "high", "-pix_fmt", "yuv420p",
              "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-t", f"{dur}", out])
-        print(f"done: {out} ({dur:.1f}s, {fmt})")
+        cover = os.path.splitext(out)[0] + "_cover.jpg"
+        run(["ffmpeg", "-y", "-ss", f"{min(float(plan.get('cover', 0.5)), dur - 0.1)}", "-i", out, "-frames:v", "1", "-q:v", "2", cover])
+        print(f"done: {out} ({dur:.1f}s, {fmt}) + cover {cover}")
         return out
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -332,6 +349,7 @@ def main():
     p = sub.add_parser("contact"); p.add_argument("file"); p.add_argument("-n", type=int, default=16); p.add_argument("-o")
     p = sub.add_parser("render"); p.add_argument("plan")
     p = sub.add_parser("ref"); p.add_argument("files", nargs="+")
+    p = sub.add_parser("safe"); p.add_argument("file"); p.add_argument("-t", type=float, nargs="+", default=[1.0])
     a = ap.parse_args()
     if a.cmd == "probe":
         for f in a.files:
@@ -349,6 +367,9 @@ def main():
         for f in a.files:
             rep = analyze_ref(f)
             print(json.dumps({k: v for k, v in rep.items() if k != "cut_times"}, indent=1))
+    elif a.cmd == "safe":
+        for t in a.t:
+            print(safe_check(a.file, t))
     elif a.cmd == "render":
         render(a.plan)
 

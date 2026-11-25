@@ -18,7 +18,7 @@ Paths are relative to the plan file. Render with `python3 studio/studio.py rende
   "music": {"file": "music/track.mp3", "volume": 0.2, "start": 12, "duck": true},
   "text": [
     {"text": "15-MIN\nGARLIC PASTA", "start": 0, "end": 2.2},
-    {"text": "Follow for part 2", "start": -2.0, "end": -0.1, "style": "box", "y": 0.8}
+    {"text": "Follow for part 2", "start": -2.0, "end": -0.1, "style": "box", "y": 0.6}
   ]
 }
 ```
